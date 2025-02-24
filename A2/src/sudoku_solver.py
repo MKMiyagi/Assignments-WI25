@@ -40,7 +40,12 @@ def find_empty_cell(board):
         - If there are no empty cells, returns None.
     """
     # TODO: implement
-    pass
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] == 0:
+                return (row, col)
+    
+    return None
 
 
 def is_valid(board, row, col, num):
@@ -60,7 +65,22 @@ def is_valid(board, row, col, num):
     bool: True if valid, False otherwise.
     """
     # TODO: implement
-    pass
+    if num in board[row]:
+        return False
+    
+    for i in range(9):
+        if board[i][col] == num:
+            return False
+    
+    box_row = (row // 3) * 3
+    box_col = (col // 3) * 3
+
+    for i in range(3):
+        for j in range(3):
+            if board[box_row + i][box_col + j] == num:
+                return False
+    
+    return True
 
 
 def solve_sudoku(board):
@@ -76,7 +96,22 @@ def solve_sudoku(board):
         - False if the puzzle is unsolvable.
     """
     # TODO: implement
-    pass
+    empty = find_empty_cell(board)
+    if not empty:
+        return True
+    
+    row, col = empty
+
+    for num in range(1,10):
+        if is_valid(board, row, col, num):
+            board[row][col] = num
+
+            if solve_sudoku(board):
+                return True
+        
+        board[row][col] = 0
+    
+    return False
 
 
 def is_solved_correctly(board):
@@ -93,7 +128,31 @@ def is_solved_correctly(board):
     bool: True if the board is correctly solved, False otherwise.
     """
     # TODO: implement
-    pass
+    for row in range(9):
+        row_values = board[row]
+        if sorted(row_values) != list(range(1,10)):
+            return False
+        
+    for col in range(9):
+        col_values = []
+        for row in range(9):
+            col_values.append(board[row][col])
+
+        if sorted(col_values) != list(range(1,10)):
+            return False
+        
+    for box_row in range(0, 9, 3):
+        for box_col in range(0, 9, 3):
+            sub_box = []
+            for i in range(3):
+                for j in range(3):
+                    sub_box.append(board[box_row + i][box_col + j])
+
+            if sorted(sub_box) != list(range(1, 10)):
+                return False
+            
+    return True
+    
 
 
 if __name__ == "__main__":
